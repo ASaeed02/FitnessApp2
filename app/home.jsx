@@ -1,36 +1,40 @@
 import React from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, ScrollView, ImageBackground  } from 'react-native';
+import { View, Modal, Text, FlatList, Image, TouchableOpacity, StyleSheet, ScrollView, ImageBackground  } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-//import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 
 const exercises = [
-  { id: '1', name: 'Push-ups', image: require('../assets/images/pushups.png'), description: 'Build upper body strength' },
-  { id: '2', name: 'Squats', image: require('../assets/images/squats.webp'), description: 'Strengthen your lower body' },
-  { id: '3', name: 'Plank', image: require('../assets/images/plank.png'), description: 'Engage core muscles and improve stability' },
-  { id: '4', name: 'Mountain Climbers', image: require('../assets/images/mountain-climbers.jpg'), description: 'Cardiovascular, full-body workout' },
-  { id: '5', name: 'Lunges', image: require('../assets/images/lunges.png'), description: 'Target leg muscles and enhance balance' },
-  { id: '6', name: 'Burpees', image: require('../assets/images/burpees.jpeg'), description: 'Full-body exercise for strength and cardio' },
+  { id: '1', name: 'Push-ups', image: require('../assets/images/pushups.png'), description: 'Build upper body strength', sets: 3, reps: 15, calBurned: 150, muscle: 'Chest, Shoulders, Triceps'},
+  { id: '2', name: 'Squats', image: require('../assets/images/squats.webp'), description: 'Strengthen your lower body', sets: 4, reps: 12, calBurned: 120, muscle: 'Quadriceps, Hamstrings, Glutes'},
+  { id: '3', name: 'Plank', image: require('../assets/images/plank.png'), description: 'Engage core muscles and improve stability', sets: 3, reps: '60 seconds', calBurned: 90, muscle: 'Core'},
+  { id: '4', name: 'Mountain Climbers', image: require('../assets/images/mountain-climbers.jpg'), description: 'Cardiovascular, full-body workout', sets: 3, reps: 30, calBurned: 180, muscle: 'Core, Shoulders, Legs'},
+  { id: '5', name: 'Lunges', image: require('../assets/images/lunges.png'), description: 'Target leg muscles and enhance balance', sets: 3, reps: 12, calBurned: 130, muscle: 'Quadriceps, Hamstrings, Glutes'},
+  { id: '6', name: 'Burpees', image: require('../assets/images/burpees.jpeg'), description: 'Full-body exercise for strength and cardio', sets: 3, reps: 10, calBurned: 200, muscle: 'Chest, Shoulders, Legs, Core'},
 
 ];
 
 export default function Home() {
   const router = useRouter();
+  const [selectedExercise, setSelectedExercise] = useState(null);
+
 
 
   const renderExerciseItem = ({ item }) => (
-    <TouchableOpacity style={styles.exerciseItem}>
+    <TouchableOpacity
+      style={styles.exerciseItem}
+      onPress={() => setSelectedExercise(item)} >
       <Image source={item.image} style={styles.exerciseImage} />
       <Text style={styles.exerciseName}>{item.name}</Text>
       <Text style={styles.exerciseDescription}>{item.description}</Text>
     </TouchableOpacity>
   );
 
-  return (
 
+  return (
 
     <ImageBackground
       source={require('../assets/images/home-background3.png')}
@@ -65,6 +69,31 @@ export default function Home() {
             keyExtractor={(item) => item.id}
             renderItem={renderExerciseItem}
             numColumns={2} />
+
+            {/* displaying exercise information such as sets, reps... */}
+          <Modal
+            visible={selectedExercise !== null}
+            animationType="slide"
+            transparent={true}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>{selectedExercise?.name}</Text>
+                <Text style={styles.modalDescription}>{selectedExercise?.description}</Text>
+                <Text style={styles.additionalInfoText}>Sets: {selectedExercise?.sets}</Text>
+                <Text style={styles.additionalInfoText}>Reps: {selectedExercise?.reps}</Text>
+                <Text style={styles.additionalInfoText}>Calories Burned: {selectedExercise?.calBurned}</Text>
+                <Text style={styles.additionalInfoText}>Target Muscle: {selectedExercise?.muscle}</Text>
+    
+                <TouchableOpacity
+                  onPress={() => setSelectedExercise(null)}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
 
         </LinearGradient>
         </View> 
@@ -102,7 +131,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
   },
   instructionsText: {
-    fontSize: hp(2.1),
+    fontSize: hp(2.3),
     color: 'rgb(96, 96, 96)',
     marginTop: 2,
     marginBottom: 4,
@@ -154,4 +183,49 @@ buttonText: {
     fontWeight: 'bold',
     letterSpacing: 1,
 },
+modalContainer: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(169, 169, 169, 0.7)',
+},
+modalContent: {
+  backgroundColor: 'white',
+  padding: 20,
+  borderRadius: 10,
+  elevation: 5,
+},
+modalTitle: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginBottom: 10,
+},
+modalDescription: {
+  fontSize: 18,
+  color: '#666',
+  marginBottom: 20,
+},
+closeButton: {
+  backgroundColor: 'teal',
+  padding: 10,
+  borderRadius: 5,
+  alignSelf: 'flex-end',
+  marginTop: 15,
+
+},
+closeButtonText: {
+  color: 'white',
+  fontWeight: 'bold',
+},
+
+additionalInfoContainer: {
+  marginTop: 10,
+  marginBottom: 10,
+},
+additionalInfoText: {
+  fontSize: 18,
+  color: '#262626',
+  fontWeight: '500',
+},
+
 });

@@ -1,4 +1,9 @@
-/* Resources: 
+/*  Alrabab Saeed
+    ITN 263-401 Mobile App Development
+    Final Project - Fitness App
+
+
+Resources: 
    https://www.npmjs.com/package/react-native-responsive-screen
    https://www.nativewind.dev/quick-starts/expo
    https://www.youtube.com/watch?v=_MttMnZ3CeI&t=486s
